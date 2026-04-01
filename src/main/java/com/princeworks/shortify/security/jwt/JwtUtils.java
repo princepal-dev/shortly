@@ -1,6 +1,6 @@
 package com.princeworks.shortify.security.jwt;
 
-import com.princeworks.shortify.security.services.UserDetailsImpl;
+import com.princeworks.shortify.security.service.UserDetailsImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -79,6 +79,15 @@ public class JwtUtils {
         .expiration(new Date((new Date().getTime() + jwtExpirationMs)))
         .signWith(key())
         .compact();
+  }
+
+  public String getUserNameFromJwtToken(String token) {
+    return Jwts.parser()
+        .verifyWith((SecretKey) key())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
   }
 
   public Key key() {

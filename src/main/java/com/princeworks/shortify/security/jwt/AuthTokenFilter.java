@@ -1,18 +1,22 @@
 package com.princeworks.shortify.security.jwt;
 
+import com.princeworks.shortify.security.service.UserServiceDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
+@Component
 public class AuthTokenFilter extends OncePerRequestFilter {
   @Autowired private JwtUtils jwtUtils;
+  @Autowired private UserServiceDetailsImpl userServiceDetails;
 
   private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -25,6 +29,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     try {
       String jwt = parseJwt(request);
       if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        UserDetails userDetails = userServiceDetails.loadUserByUsername(username);
+        
       }
     } catch (Exception e) {
       logger.error("Cannot set user authentication: {}", e.getMessage());

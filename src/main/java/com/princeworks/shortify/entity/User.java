@@ -38,6 +38,12 @@ public class User {
     @Size(min = 6)
     private String password;
 
+    public User(String userName, String email, String password) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+    }
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;

@@ -1,5 +1,6 @@
 package com.princeworks.shortify.service.click;
 
+import com.princeworks.shortify.dto.request.UrlUpdateDTO;
 import com.princeworks.shortify.dto.response.UrlDTO;
 import com.princeworks.shortify.dto.response.UrlResponse;
 import com.princeworks.shortify.entity.Url;
@@ -57,7 +58,26 @@ public class UrlServiceImpl implements UrlService {
     if (!url.getIsActive()) {
       throw new IllegalStateException("URL is inactive");
     }
+    url.setClickCount(url.getClickCount() + 1);
+    urlRepository.save(url);
     return url.getOriginalUrl();
+  }
+
+  @Override
+  public String updateUrl(Long urlId, User loggedInUser, UrlUpdateDTO urlUpdateDTO) {
+    Url url =
+        urlRepository
+            .findById(urlId)
+            .orElseThrow(() -> new IllegalArgumentException("URL not found with id: " + urlId));
+    User user = url.getUser();
+
+    if (!Objects.equals(loggedInUser.getId(), user.getId())) {
+      throw new IllegalStateException("Unauthorized to update this URL");
+    }
+
+    url.setIsActive(urlUpdateDTO.getIsActive());
+    urlRepository.save(url);
+    return "URL updated successfully with id: " + urlId;
   }
 
   @Override

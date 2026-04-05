@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,6 +52,7 @@ public class UrlServiceImpl implements UrlService {
   }
 
   @Override
+  @Cacheable(value = "urlCache", key = "#code", unless = "#result == null", sync = true)
   public String getOriginalUrl(String code) {
     Url url =
         urlRepository
@@ -58,9 +61,13 @@ public class UrlServiceImpl implements UrlService {
     if (!url.getIsActive()) {
       throw new IllegalStateException("URL is inactive");
     }
-    url.setClickCount(url.getClickCount() + 1);
-    urlRepository.save(url);
     return url.getOriginalUrl();
+  }
+
+  @Async
+  @Override
+  public void incrementClickCount(String code) {
+    urlRepository.incrementClickCount(code);
   }
 
   @Override

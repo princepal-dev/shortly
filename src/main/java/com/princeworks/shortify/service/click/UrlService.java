@@ -7,6 +7,7 @@ import com.princeworks.shortify.entity.User;
 
 public interface UrlService {
     String getOriginalUrl(String code);
+    void incrementClickCount(String code);
     UrlDTO createUrl(String originalUrl, User user);
     String deleteUrl(Long urlId, User loggedInUser);
     String updateUrl(Long urlId, User loggedInUser, UrlUpdateDTO urlUpdateDTO);

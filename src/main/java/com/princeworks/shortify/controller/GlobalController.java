@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GlobalController {
-  @Autowired
-  private UrlService urlService;
+  @Autowired private UrlService urlService;
 
   @GetMapping("/health")
   public ResponseEntity<String> healthCheck() {
@@ -20,6 +19,7 @@ public class GlobalController {
   @GetMapping("/{code}")
   public ResponseEntity<Void> redirectToOriginalUrl(@PathVariable String code) {
     String originalUrl = urlService.getOriginalUrl(code);
+    urlService.incrementClickCount(code);
     return ResponseEntity.status(302).header("Location", originalUrl).build();
   }
 }

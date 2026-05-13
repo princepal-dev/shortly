@@ -12,15 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController("/api/auth")
 public class AuthController {
-    @Autowired
-    private AuthService authService;
+  @Autowired
+  private AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterDTO registerDTO) {
-        RegisterResponse registerResponse = authService.register(registerDTO);
-        return new ResponseEntity<>(registerResponse, HttpStatus.CREATED);
-    }
+  @PostMapping("/register")
+  public ResponseEntity<RegisterResponse> register(@RequestBody RegisterDTO registerDTO) {
+    RegisterResponse registerResponse = authService.register(registerDTO);
+    return new ResponseEntity<>(registerResponse, HttpStatus.CREATED);
+  }
 
-    // TODO: Implement user login
-    // TODO: Sign out user
+  // TODO: Implement user login
+
+  @PostMapping("/logout")
+  public ResponseEntity<String> logout() {
+    return new ResponseEntity<>("logout succes!", HttpStatus.ACCEPTED);
+  }
 }
